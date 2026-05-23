@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Serenity 靜序</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,300;0,400;1,300;1,400&family=Jost:wght@200;300;400&family=Noto+Serif+TC:wght@200;300&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --ink:    #1a1510;
+  --forest: #1e2d1a;
+  --moss:   #2d4028;
+  --sage:   #7a9e72;
+  --gold:   #c4a35a;
+  --cream:  #f0e8d5;
+  --stone:  #9aaa88;
+  --warm:   #3d2d1a;
+}
+
+html, body { background: var(--ink); color: var(--cream); font-family: 'Jost', sans-serif; font-weight: 300; overflow-x: hidden; }
+
+/* ── HERO — full bleed image with text overlay ── */
+.hero {
+  position: relative;
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  overflow: hidden;
+}
+
+.hero-bg {
+  position: absolute;
+  inset: 0;
+  background-image: url('https://images.unsplash.com/photo-1545389336-cf090694435e?w=900&q=80');
+  background-size: cover;
+  background-position: center 30%;
+  filter: brightness(0.45) saturate(0.8);
+}
+
+.hero-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    rgba(26,21,16,0.1) 0%,
+    rgba(26,21,16,0.2) 40%,
+    rgba(26,21,16,0.85) 80%,
+    rgba(26,21,16,1) 100%
+  );
+}
+
+.hero-content {
+  position: relative;
+  z-index: 2;
+  padding: 0 28px 56px;
+  animation: fadeUp 1.2s cubic-bezier(0.16,1,0.3,1) forwards;
+}
+
+@keyframes fadeUp { from{opacity:0;transform:translateY(24px)} to{opacity:1;transform:none} }
+
+.hero-eyebrow {
+  font-size: 9px;
+  letter-spacing: 0.45em;
+  color: var(--gold);
+  text-transform: uppercase;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.hero-eyebrow::before { content:''; width: 32px; height: 1px; background: var(--gold); opacity: 0.6; }
+
+.hero-title {
+  font-family: 'Playfair Display', serif;
+  font-weight: 300;
+  font-size: clamp(56px, 15vw, 96px);
+  color: var(--cream);
+  line-height: 0.9;
+  margin-bottom: 6px;
+}
+
+.hero-title em { color: var(--gold); font-style: italic; }
+
+.hero-zh {
+  font-family: 'Noto Serif TC', serif;
+  font-weight: 200;
+  font-size: 13px;
+  letter-spacing: 0.7em;
+  color: var(--stone);
+  margin-bottom: 24px;
+}
+
+.hero-tagline {
+  font-family: 'Playfair Display', serif;
+  font-style: italic;
+  font-size: clamp(15px, 3.5vw, 18px);
+  color: var(--cream);
+  opacity: 0.7;
+  line-height: 1.9;
+  margin-bottom: 36px;
+}
+
+.hero-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 40px;
+}
+
+.pill {
+  font-size: 9px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  padding: 7px 16px;
+  border: 1px solid rgba(196,163,90,0.5);
+  border-radius: 100px;
+  color: var(--gold);
+  background: rgba(196,163,90,0.08);
+  backdrop-filter: blur(4px);
+}
+
+/* ── PLAYER ── */
+.player {
+  background: rgba(30,25,18,0.85);
+  border: 1px solid rgba(196,163,90,0.25);
+  border-radius: 18px;
+  padding: 22px 20px;
+  backdrop-filter: blur(12px);
+}
+
+.player-top { display: flex; align-items: center; gap: 14px; margin-bottom: 16px; }
+.player-icon { width: 44px; height: 44px; border-radius: 50%; border: 1px solid rgba(196,163,90,0.35); display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
+.player-eyebrow { font-size: 9px; letter-spacing: 0.3em; color: var(--sage); text-transform: uppercase; margin-bottom: 2px; }
+.player-title { font-family: 'Playfair Display', serif; font-size: 15px; color: var(--cream); }
+.player-sub { font-size: 10px; color: var(--stone); margin-top: 2px; }
+
+.wave { display: flex; align-items: center; gap: 2.5px; height: 28px; margin-bottom: 14px; }
+.wbar { flex: 1; background: var(--sage); border-radius: 2px; opacity: 0.2; }
+.wbar:nth-child(odd)  { height: 25%; }
+.wbar:nth-child(even) { height: 65%; }
+.wbar:nth-child(4) { animation: wv 1.3s ease-in-out infinite 0.0s; }
+.wbar:nth-child(5) { animation: wv 1.3s ease-in-out infinite 0.15s; }
+.wbar:nth-child(6) { animation: wv 1.3s ease-in-out infinite 0.3s; }
+.wbar:nth-child(7) { animation: wv 1.3s ease-in-out infinite 0.1s; }
+.wbar:nth-child(8) { animation: wv 1.3s ease-in-out infinite 0.25s; }
+.wbar.live { opacity: 1; }
+@keyframes wv { 0%,100%{transform:scaleY(0.35)} 50%{transform:scaleY(1)} }
+
+.play-btn { display: flex; align-items: center; gap: 10px; width: 100%; background: var(--gold); border: none; border-radius: 100px; padding: 12px 20px; cursor: pointer; transition: all 0.3s; }
+.play-btn:hover { background: #d4b470; }
+.play-triangle { width:0; height:0; border-left:13px solid var(--ink); border-top:7px solid transparent; border-bottom:7px solid transparent; margin-left:2px; }
+.pause-bars { display:flex; gap:3px; }
+.pause-bar  { width:3px; height:12px; background:var(--ink); border-radius:2px; }
+.play-btn-label { font-size: 10px; letter-spacing: 0.2em; color: var(--ink); text-transform: uppercase; }
+.play-btn-dur   { margin-left: auto; font-size: 10px; color: rgba(26,21,16,0.5); }
+
+/* ── FULL BLEED IMAGE SECTIONS ── */
+.img-section {
+  position: relative;
+  height: 280px;
+  overflow: hidden;
+}
+
+.img-section img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: brightness(0.45) saturate(0.75);
+  display: block;
+}
+
+.img-section-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, rgba(26,21,16,0.3), rgba(26,21,16,0.7));
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 28px 24px;
+}
+
+.img-label {
+  font-size: 9px;
+  letter-spacing: 0.4em;
+  color: var(--gold);
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+.img-title {
+  font-family: 'Playfair Display', serif;
+  font-style: italic;
+  font-weight: 300;
+  font-size: clamp(22px, 6vw, 32px);
+  color: var(--cream);
+  line-height: 1.2;
+}
+
+/* ── EVENTS ── */
+.events { background: var(--ink); padding: 0 0 8px; }
+
+.event {
+  margin: 16px 16px 0;
+  border-radius: 20px;
+  overflow: hidden;
+  border: 1px solid rgba(196,163,90,0.15);
+  transition: transform 0.3s, border-color 0.3s;
+}
+.event:hover { transform: translateY(-2px); border-color: rgba(196,163,90,0.4); }
+
+.event-img-wrap { position: relative; height: 200px; overflow: hidden; }
+.event-img-wrap img { width: 100%; height: 100%; object-fit: cover; filter: brightness(0.5) saturate(0.7); display: block; }
+.event-img-overlay {
+  position: absolute; inset: 0;
+  background: linear-gradient(to bottom, transparent 30%, rgba(26,21,16,0.95) 100%);
+  display: flex; flex-direction: column; justify-content: flex-end;
+  padding: 16px 20px;
+}
+
+.event-name-en { font-family: 'Playfair Display', serif; font-size: clamp(26px, 7vw, 36px); font-weight: 300; color: var(--cream); line-height: 1; }
+.event-name-zh { font-family: 'Noto Serif TC', serif; font-weight: 200; font-size: 11px; letter-spacing: 0.3em; color: var(--gold); opacity: 0.8; margin-top: 2px; }
+
+.event-body { background: #1e1a12; padding: 20px 20px 24px; }
+
+.event-date { font-size: 9px; letter-spacing: 0.3em; color: var(--sage); text-transform: uppercase; margin-bottom: 12px; }
+.event-sub-en { font-family: 'Playfair Display', serif; font-style: italic; font-size: 13px; color: var(--stone); margin-bottom: 4px; }
+.event-sub-zh { font-family: 'Noto Serif TC', serif; font-size: 11px; color: var(--stone); opacity: 0.6; margin-bottom: 16px; letter-spacing: 0.05em; }
+
+.event-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 18px; }
+.chip { font-size: 9px; letter-spacing: 0.1em; padding: 5px 12px; border-radius: 100px; border: 1px solid rgba(196,163,90,0.25); color: var(--stone); }
+
+.event-meta { display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px; padding-top: 16px; border-top: 1px solid rgba(255,255,255,0.06); }
+.meta-row { display: flex; gap: 10px; font-size: 12px; color: var(--cream); opacity: 0.7; align-items: center; }
+.meta-icon { color: var(--gold); width: 14px; text-align: center; flex-shrink: 0; }
+
+.event-btn { display: block; width: 100%; padding: 14px; background: var(--gold); color: var(--ink); border: none; border-radius: 12px; font-family: 'Jost', sans-serif; font-size: 10px; letter-spacing: 0.25em; text-transform: uppercase; cursor: pointer; text-align: center; text-decoration: none; transition: all 0.3s; font-weight: 400; }
+.event-btn:hover { background: #d4b470; }
+.event-btn.outline { background: transparent; border: 1px solid rgba(196,163,90,0.3); color: var(--cream); }
+.event-btn.outline:hover { border-color: var(--gold); color: var(--gold); }
+
+/* ── SERVICES ── */
+.services { background: var(--forest); padding: 48px 16px; }
+
+.svc-header { padding: 0 8px 32px; }
+.svc-eyebrow { font-size: 9px; letter-spacing: 0.45em; color: var(--sage); text-transform: uppercase; margin-bottom: 8px; }
+.svc-title-en { font-family: 'Playfair Display', serif; font-style: italic; font-weight: 300; font-size: clamp(24px, 6vw, 34px); color: var(--cream); margin-bottom: 4px; }
+.svc-title-zh { font-family: 'Noto Serif TC', serif; font-weight: 200; font-size: 12px; letter-spacing: 0.3em; color: var(--gold); opacity: 0.7; }
+
+.svc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+.svc {
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,0.06);
+  transition: all 0.3s;
+  background: rgba(0,0,0,0.2);
+}
+.svc:hover { border-color: rgba(196,163,90,0.3); transform: translateY(-2px); }
+
+.svc-img { width: 100%; height: 90px; object-fit: cover; display: block; filter: brightness(0.5) saturate(0.7); }
+
+.svc-body { padding: 14px 14px 16px; }
+.svc-name-en { font-family: 'Playfair Display', serif; font-size: 14px; font-weight: 300; color: var(--cream); margin-bottom: 2px; }
+.svc-name-zh { font-family: 'Noto Serif TC', serif; font-weight: 200; font-size: 10px; letter-spacing: 0.2em; color: var(--gold); opacity: 0.6; margin-bottom: 5px; }
+.svc-desc { font-size: 10px; color: var(--stone); line-height: 1.6; }
+
+/* ── QUOTE SECTION ── */
+.quote-section {
+  position: relative;
+  padding: 72px 28px;
+  text-align: center;
+  overflow: hidden;
+}
+
+.quote-bg {
+  position: absolute; inset: 0;
+  background-image: url('https://images.unsplash.com/photo-1518241353330-0f7941c2d9b5?w=900&q=80');
+  background-size: cover;
+  background-position: center;
+  filter: brightness(0.25) saturate(0.6);
+}
+
+.quote-overlay {
+  position: absolute; inset: 0;
+  background: rgba(26,21,16,0.6);
+}
+
+.quote-inner { position: relative; z-index: 1; max-width: 340px; margin: 0 auto; }
+
+.quote-mark {
+  font-family: 'Playfair Display', serif;
+  font-size: 80px;
+  color: var(--gold);
+  opacity: 0.3;
+  line-height: 0.5;
+  margin-bottom: 24px;
+  display: block;
+}
+
+.quote-text {
+  font-family: 'Playfair Display', serif;
+  font-style: italic;
+  font-size: clamp(18px, 5vw, 24px);
+  color: var(--cream);
+  line-height: 1.7;
+  margin-bottom: 8px;
+}
+
+.quote-zh {
+  font-family: 'Noto Serif TC', serif;
+  font-weight: 200;
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  color: var(--stone);
+  opacity: 0.7;
+}
+
+/* ── CONNECT ── */
+.connect {
+  background: var(--ink);
+  padding: 64px 24px;
+  text-align: center;
+}
+
+.connect-inner { max-width: 380px; margin: 0 auto; }
+.connect-eyebrow { font-size: 9px; letter-spacing: 0.45em; color: var(--sage); text-transform: uppercase; margin-bottom: 16px; }
+.connect-title-en { font-family: 'Playfair Display', serif; font-style: italic; font-weight: 300; font-size: clamp(22px, 5vw, 30px); color: var(--cream); line-height: 1.5; margin-bottom: 6px; }
+.connect-title-en em { color: var(--gold); font-style: normal; }
+.connect-title-zh { font-family: 'Noto Serif TC', serif; font-weight: 200; font-size: 12px; letter-spacing: 0.1em; color: var(--stone); opacity: 0.6; margin-bottom: 40px; }
+
+.connect-btns { display: flex; flex-direction: column; gap: 11px; }
+.cta-btn { display: flex; align-items: center; justify-content: center; gap: 10px; padding: 15px 28px; border-radius: 100px; font-family: 'Jost', sans-serif; font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; text-decoration: none; transition: all 0.3s; border: none; cursor: pointer; }
+.cta-btn.primary { background: var(--gold); color: var(--ink); }
+.cta-btn.primary:hover { background: #d4b470; }
+.cta-btn.outline { background: transparent; border: 1px solid rgba(196,163,90,0.3); color: var(--cream); }
+.cta-btn.outline:hover { border-color: var(--gold); color: var(--gold); }
+
+.locs { display: flex; justify-content: center; gap: 16px; flex-wrap: wrap; margin-top: 40px; padding-top: 28px; border-top: 1px solid rgba(255,255,255,0.06); }
+.loc  { font-size: 9px; letter-spacing: 0.2em; color: var(--stone); text-transform: uppercase; opacity: 0.7; }
+
+/* ── FOOTER ── */
+footer { background: #0e0b08; padding: 44px 24px; text-align: center; }
+.footer-brand { font-family: 'Playfair Display', serif; font-weight: 300; font-size: 26px; letter-spacing: 0.2em; color: var(--gold); margin-bottom: 2px; }
+.footer-zh { font-family: 'Noto Serif TC', serif; font-size: 9px; letter-spacing: 0.5em; color: var(--stone); opacity: 0.5; margin-bottom: 24px; }
+.footer-links { display: flex; gap: 24px; justify-content: center; margin-bottom: 20px; }
+.footer-link { font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--stone); text-decoration: none; opacity: 0.6; transition: all 0.3s; }
+.footer-link:hover { color: var(--gold); opacity: 1; }
+.footer-copy { font-size: 9px; letter-spacing: 0.1em; color: var(--stone); opacity: 0.3; }
+
+
+/* PARTNER */
+.partner {
+  background: var(--forest);
+  padding: 64px 24px;
+}
+.partner-inner {
+  max-width: 380px;
+  margin: 0 auto;
+  text-align: center;
+}
+.partner-eyebrow {
+  font-size: 9px;
+  letter-spacing: 0.45em;
+  color: var(--sage);
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+.partner-title {
+  font-family: 'Playfair Display', serif;
+  font-style: italic;
+  font-weight: 300;
+  font-size: clamp(26px, 6vw, 36px);
+  color: var(--cream);
+  line-height: 1.2;
+  margin-bottom: 32px;
+}
+.partner-sub {
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  color: var(--stone);
+  text-transform: uppercase;
+  margin-bottom: 16px;
+}
+.partner-brand {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(196,163,90,0.2);
+  border-radius: 16px;
+  padding: 18px 20px;
+  margin-bottom: 24px;
+  text-align: left;
+}
+.partner-logo {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: rgba(196,163,90,0.1);
+  border: 1px solid rgba(196,163,90,0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  flex-shrink: 0;
+}
+.partner-name {
+  font-family: 'Playfair Display', serif;
+  font-size: 16px;
+  color: var(--cream);
+  margin-bottom: 3px;
+}
+.partner-desc {
+  font-size: 10px;
+  color: var(--stone);
+  letter-spacing: 0.05em;
+}
+.partner-offer {
+  background: rgba(196,163,90,0.08);
+  border: 1px solid rgba(196,163,90,0.3);
+  border-radius: 16px;
+  padding: 24px 20px;
+  margin-bottom: 20px;
+}
+.offer-label {
+  font-size: 9px;
+  letter-spacing: 0.3em;
+  color: var(--sage);
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+.offer-discount {
+  font-family: 'Playfair Display', serif;
+  font-size: 56px;
+  font-weight: 300;
+  color: var(--gold);
+  line-height: 1;
+  margin-bottom: 12px;
+}
+.offer-code {
+  font-size: 13px;
+  color: var(--cream);
+  margin-bottom: 8px;
+}
+.code-tag {
+  background: var(--gold);
+  color: var(--ink);
+  padding: 3px 12px;
+  border-radius: 6px;
+  font-family: 'Jost', sans-serif;
+  font-size: 12px;
+  letter-spacing: 0.15em;
+  font-weight: 400;
+}
+.offer-note {
+  font-size: 10px;
+  color: var(--stone);
+  opacity: 0.7;
+}
+.partner-btn {
+  display: inline-block;
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  color: var(--gold);
+  text-decoration: none;
+  text-transform: uppercase;
+  border-bottom: 1px solid rgba(196,163,90,0.4);
+  padding-bottom: 3px;
+  transition: all 0.3s;
+}
+.partner-btn:hover { opacity: 0.7; }
+
+/* REVEAL */
+.reveal { opacity: 0; transform: translateY(20px); transition: opacity 0.8s ease, transform 0.8s ease; }
+.reveal.in { opacity: 1; transform: none; }
+</style>
+</head>
+<body>
+
+<!-- HERO — full bleed -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-overlay"></div>
+  <div class="hero-content">
+    <div class="hero-eyebrow">Sound Healing · Wellness · Art</div>
+    <div class="hero-title">Sere<em>nity</em></div>
+    <div class="hero-zh">Jing Xu</div>
+    <div class="hero-tagline">
+      A space to slow down.<br>
+      <span style="font-family:'Noto Serif TC',serif;font-weight:200;font-size:0.85em;">Let sound bring you home.</span>
+    </div>
+    <div class="hero-pills">
+      <span class="pill">Sound Bowl</span>
+      <span class="pill"></span>
+      <span class="pill">Art Therapy</span>
+      <span class="pill"></span>
+    </div>
+    <!-- Player -->
+    <div class="player">
+      <div class="player-top">
+        <div class="player-icon">🎵</div>
+        <div>
+          <div class="player-eyebrow">Free Meditation Track</div>
+          <div class="player-title">Deep Relaxation</div>
+          <div class="player-sub">Singing bowl · 15 min</div>
+        </div>
+      </div>
+      <div class="wave">
+        <div class="wbar"></div><div class="wbar"></div><div class="wbar"></div>
+        <div class="wbar"></div><div class="wbar"></div><div class="wbar"></div>
+        <div class="wbar"></div><div class="wbar"></div><div class="wbar"></div>
+        <div class="wbar"></div><div class="wbar"></div><div class="wbar"></div>
+      </div>
+      <button class="play-btn" onclick="togglePlay()">
+        <div id="playIcon"><div class="play-triangle"></div></div>
+        <span id="playLabel" class="play-btn-label">Play Free Track</span>
+        <span class="play-btn-dur">15 min</span>
+      </button>
+    </div>
+  </div>
+</section>
+
+<!-- IMAGE SECTION — Upcoming -->
+<div class="img-section reveal">
+  <img src="https://images.unsplash.com/photo-1600618528240-fb9fc964b853?w=900&q=80" alt="Wellness space"/>
+  <div class="img-section-overlay">
+    <div class="img-label">Upcoming Events</div>
+    <div class="img-title">Join us for<br>something different.</div>
+  </div>
+</div>
+
+<!-- EVENTS -->
+<div class="events reveal">
+
+  <div class="event">
+    <div class="event-img-wrap">
+      <img src="https://images.unsplash.com/photo-1518241353330-0f7941c2d9b5?w=800&q=80" alt="Time Traveler"/>
+      <div class="event-img-overlay">
+        <div class="event-name-en">Time Traveler</div>
+        
+      </div>
+    </div>
+    <div class="event-body">
+      <div class="event-date">07 · 14 · 2025 · Macau Macau</div>
+      <div class="event-sub-en">Travel through time, return to yourself.</div>
+      
+      <div class="event-chips">
+        <span class="chip">Sound Bowl </span>
+        <span class="chip">Tarot Reading</span>
+        <span class="chip">12 Spots</span>
+      </div>
+      <div class="event-meta">
+        <div class="meta-row"><span class="meta-icon">📍</span><span>Macau (DM for address)</span></div>
+        <div class="meta-row"><span class="meta-icon">🕖</span><span>7:00 – 9:30 PM</span></div>
+        <div class="meta-row"><span class="meta-icon">✦</span><span>MOP 280 / person</span></div>
+      </div>
+      <a href="https://wa.me/85251128267" class="event-btn">Register Now</a>
+    </div>
+  </div>
+
+  <div class="event" style="margin-bottom:16px;">
+    <div class="event-img-wrap">
+      <img src="https://images.unsplash.com/photo-1460661419201-fd4cecdf8a8b?w=800&q=80" alt="Sound and Colour"/>
+      <div class="event-img-overlay">
+        <div class="event-name-en">Sound & Colour</div>
+        <div class="event-name-zh">Sound & Colour</div>
+      </div>
+    </div>
+    <div class="event-body">
+      <div class="event-date">06 · 20 · 2025 · Zhuhai Zhuhai</div>
+      <div class="event-sub-en">Let sound flow into your painting.</div>
+      
+      <div class="event-chips">
+        <span class="chip">Sound Healing</span>
+        <span class="chip">Crystal Art</span>
+        <span class="chip">8 Spots</span>
+      </div>
+      <div class="event-meta">
+        <div class="meta-row"><span class="meta-icon">📍</span><span>Serenity Studio, Zhuhai</span></div>
+        <div class="meta-row"><span class="meta-icon">🕑</span><span>2:00 – 4:30 PM</span></div>
+        <div class="meta-row"><span class="meta-icon">✦</span><span>Private Preview · Free</span></div>
+      </div>
+      <a href="https://wa.me/85251128267" class="event-btn outline">Learn More</a>
+    </div>
+  </div>
+
+</div>
+
+<!-- SERVICES -->
+<div class="services reveal">
+  <div class="svc-header">
+    <div class="svc-eyebrow">What We Offer</div>
+    <div class="svc-title-en">Healing from<br>the inside out.</div>
+    
+  </div>
+  <div class="svc-grid">
+    <div class="svc">
+      <img class="svc-img" src="https://images.unsplash.com/photo-1593811167562-9cef47bfc4d7?w=400&q=70" alt="Sound Healing"/>
+      <div class="svc-body"><div class="svc-name-en">Sound Healing</div><div class="svc-name-zh">聲療</div><div class="svc-desc">Deep relaxation</div></div>
+    </div>
+    <div class="svc">
+      <img class="svc-img" src="https://images.unsplash.com/photo-1544161515-4ab6ce6db874?w=400&q=70" alt="Massage"/>
+      <div class="svc-body"><div class="svc-name-en">Fascia Therapy</div><div class="svc-name-zh">Fascia Therapy</div><div class="svc-desc">Pain relief</div></div>
+    </div>
+    <div class="svc">
+      <img class="svc-img" src="https://images.unsplash.com/photo-1460661419201-fd4cecdf8a8b?w=400&q=70" alt="Art"/>
+      <div class="svc-body"><div class="svc-name-en">Art Therapy</div><div class="svc-desc">Crystal painting</div></div>
+    </div>
+    <div class="svc">
+      <img class="svc-img" src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&q=70" alt="Pilates"/>
+      <div class="svc-body"><div class="svc-name-en">Pilates</div><div class="svc-name-zh">Pilates</div><div class="svc-desc">Strengthen body</div></div>
+    </div>
+    <div class="svc">
+      <img class="svc-img" src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&q=70" alt="Retreat"/>
+      <div class="svc-body"><div class="svc-name-en">Retreat</div><div class="svc-name-zh">Retreat</div><div class="svc-desc">Thailand · Taishan</div></div>
+    </div>
+    <div class="svc">
+      <img class="svc-img" src="https://images.unsplash.com/photo-1508672019048-805c876b67e2?w=400&q=70" alt="Training"/>
+      <div class="svc-body"><div class="svc-name-en">Teacher Training</div><div class="svc-name-zh">Teacher Training</div><div class="svc-desc">Certified course</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- QUOTE -->
+<div class="quote-section reveal">
+  <div class="quote-bg"></div>
+  <div class="quote-overlay"></div>
+  <div class="quote-inner">
+    <span class="quote-mark">"</span>
+    <div class="quote-text">A slow, gentle touch has the power to heal a disconnected soul.</div>
+    <div class="quote-zh">A space where you can breathe again.</div>
+  </div>
+</div>
+
+
+<!-- PARTNER OFFER -->
+<div class="partner reveal">
+  <div class="partner-inner">
+    <div class="partner-eyebrow">Partner Offer</div>
+    <div class="partner-title">Exclusive Gift<br>for Our Guests</div>
+    <div class="partner-sub">In collaboration with</div>
+    <div class="partner-brand">
+      <div class="partner-logo">🌿</div>
+      <div class="partner-info">
+        <div class="partner-name">Be Good To Life</div>
+        <div class="partner-desc">Sensitive Skin Wellness Store · Hong Kong</div>
+      </div>
+    </div>
+    <div class="partner-offer">
+      <div class="offer-label">Event Attendees Receive</div>
+      <div class="offer-discount">10% OFF</div>
+      <div class="offer-code">Use code <span class="code-tag">SERENITY</span></div>
+      <div class="offer-note">Valid on all purchases at Be Good To Life</div>
+    </div>
+    <a href="https://instagram.com/be_good_to_life" class="partner-btn" target="_blank">
+      Visit @be_good_to_life →
+    </a>
+  </div>
+</div>
+
+<!-- CONNECT -->
+<div class="connect reveal">
+  <div class="connect-inner">
+    <div class="connect-eyebrow">Connect With Us</div>
+    <div class="connect-title-en">When did you last<br>truly <em>slow down?</em></div>
+    <div class="connect-title-zh">Your healing journey starts here.</div>
+    <div class="connect-btns">
+      <a href="https://wa.me/85251128267" class="cta-btn primary">💬 WhatsApp Us</a>
+      <a href="https://instagram.com/serenity.reset" class="cta-btn outline" target="_blank">📸 @serenity.reset</a>
+      <a href="weixin://" class="cta-btn outline">WeChat</a>
+      <a href="#" class="cta-btn outline">RedNote / 小紅書</a>
+    </div>
+    <div class="locs">
+      <span class="loc">Zhuhai</span><span class="loc">Macau</span>
+      <span class="loc">Hong Kong</span><span class="loc">Thailand</span><span class="loc">Taishan</span>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer class="reveal">
+  <div class="footer-brand">Serenity</div>
+  <div class="footer-zh">Jing Xu</div>
+  <div class="footer-links">
+    <a href="https://instagram.com/serenity.reset" class="footer-link" target="_blank">Instagram</a>
+    <a href="#" class="footer-link">小紅書</a>
+    <a href="https://wa.me/85251128267" class="footer-link">WhatsApp</a>
+  </div>
+  <div class="footer-copy">© 2025 Serenity 靜序 · Sound Healing · Wellness · Art</div>
+</footer>
+
+<script>
+const els = document.querySelectorAll('.reveal');
+const io = new IntersectionObserver(e => e.forEach(x => { if(x.isIntersecting) x.target.classList.add('in'); }), { threshold: 0.08 });
+els.forEach(el => io.observe(el));
+
+let playing = false;
+function togglePlay() {
+  playing = !playing;
+  const bars = document.querySelectorAll('.wbar');
+  const label = document.getElementById('playLabel');
+  const icon = document.getElementById('playIcon');
+  if (playing) {
+    bars.forEach(b => b.classList.add('live'));
+    label.textContent = 'Now Playing…';
+    icon.innerHTML = '<div class="pause-bars"><div class="pause-bar"></div><div class="pause-bar"></div></div>';
+  } else {
+    bars.forEach(b => b.classList.remove('live'));
+    label.textContent = 'Play Free Track';
+    icon.innerHTML = '<div class="play-triangle"></div>';
+  }
+}
+</script>
+</body>
+</html>
